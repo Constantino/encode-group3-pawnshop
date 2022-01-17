@@ -2,8 +2,9 @@
 pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "./NFTHandler.sol";
+import "./interfaces/IPawnshop.sol";
 
-contract Pawnshop is NFTHandler{
+contract Pawnshop is NFTHandler, IPawnshop {
     
     uint256 dailyInterestRate;
     address owner;
@@ -51,15 +52,15 @@ contract Pawnshop is NFTHandler{
     Lending[] lendings;
     
     
-    function setDailyInterestRate(uint256 _rate) public {
+    function setDailyInterestRate(uint256 _rate) external {
         dailyInterestRate = _rate;
     }
 
-    function getDailyInterestRate() view public returns(uint256) {
+    function getDailyInterestRate() view external returns(uint256) {
         return dailyInterestRate;
     }
     
-    function setChunkSize(uint256 _chunkSize) public {
+    function setChunkSize(uint256 _chunkSize) external {
         chunkSize = _chunkSize;
     }
     
@@ -104,7 +105,7 @@ contract Pawnshop is NFTHandler{
         counter++;
     }
     
-    function getChunkSize() view public returns(uint256) {
+    function getChunkSize() view external returns(uint256) {
         return chunkSize;
     }
     
@@ -115,19 +116,19 @@ contract Pawnshop is NFTHandler{
         return chunkPrice;
     }
     
-    function getLendings() public view returns (Lending[] memory) {
+    function getLendings() external view returns (Lending[] memory) {
         return lendings;
     }
 
-    function getLending(uint256 _lendingId) public view returns (Lending memory) {
+    function getLending(uint256 _lendingId) external view returns (Lending memory) {
         return lendings[_lendingId];
     }
 
-    function getParticipants(uint256 _lendingId) public view returns (Participant[] memory) {
+    function getParticipants(uint256 _lendingId) external view returns (Participant[] memory) {
         return participants[_lendingId];
     }
     
-    function lend(uint256 _lendingId) public payable {
+    function lend(uint256 _lendingId) external payable {
         require(lendings[_lendingId].status == Status.Open, "Lending opportunity is not open.");
         require(msg.value >= lendings[_lendingId].chunkPrice, "Please provide an amount in multiples of the chunk size.");
         require(msg.value%lendings[_lendingId].chunkPrice == 0, "Please provide an amount in multiples of the chunk size.");
@@ -153,7 +154,7 @@ contract Pawnshop is NFTHandler{
         
     }
     
-    function statusUpdater() public { // TODO: to change to external
+    function statusUpdater() external { 
         
         uint256 currentTimestamp = block.timestamp;
         uint256 lendingsLength = lendings.length;
@@ -209,7 +210,9 @@ contract Pawnshop is NFTHandler{
         
         
     }
-    
+
+    function singleStatusUpdater(uint256 _lendingid) external {}
+
     function returnFunds(uint256 _lendingId) private {
         uint256 participantsLen = participants[_lendingId].length;
         Participant[] memory lendParticipants = participants[_lendingId];
@@ -226,7 +229,7 @@ contract Pawnshop is NFTHandler{
     }
     
     
-    function pay(uint256 _lendingId) public payable {
+    function pay(uint256 _lendingId) external payable {
         require(msg.value == lendings[_lendingId].debt, "Payment must be equal to debt.");
         require(lendings[_lendingId].status == Status.Locked, "Payment not allowed, status: locked.");
         require(block.timestamp < lendings[_lendingId].endTime, "Payment not allowed, end time reached.");
@@ -234,7 +237,7 @@ contract Pawnshop is NFTHandler{
     }
 
     // ADDING FUNCTION TO BUY THE NFT 
-    function buy(uint256 _lendingId)public payable{
+    function buy(uint256 _lendingId)external payable{
         require(msg.value == lendings[_lendingId].debt, "Check the price for this");
         require(lendings[_lendingId].status == Status.ForSale, "Payment not allowed, this NFT is not for sale yet");
         require(block.timestamp > lendings[_lendingId].endTime, "Payment not allowed, this NFT is not for sale yet");
