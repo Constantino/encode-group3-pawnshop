@@ -18,6 +18,7 @@ contract Pawnshop is NFTHandler, IPawnshop, AccessControl {
         dailyInterestRate = _rate;
         chunkSize = _chunkSize;
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
+        _setupRole(BACKEND_ROLE, _msgSender());
     }
     
     enum Status { Review, Open, ReadyToLend, Locked, Paid, ForSale, Sold, Terminated }
