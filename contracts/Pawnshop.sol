@@ -1,20 +1,23 @@
 // SPDX-License-Identifier: MIT 
 pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
+
 import "./NFTHandler.sol";
 import "./interfaces/IPawnshop.sol";
 
-contract Pawnshop is NFTHandler, IPawnshop {
-    
+contract Pawnshop is NFTHandler, IPawnshop, AccessControl {
+
+	bytes32 public constant BACKEND_ROLE = keccak256("BACKEND_ROLE");
+
     uint256 dailyInterestRate;
-    address owner;
     uint256 chunkSize;
     uint256 counter;
     
     constructor(uint256 _rate, uint256 _chunkSize){
         dailyInterestRate = _rate;
         chunkSize = _chunkSize;
-        owner = msg.sender;
+        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
     
     enum Status { Review, Open, ReadyToLend, Locked, Paid, ForSale, Sold, Terminated }
@@ -52,19 +55,19 @@ contract Pawnshop is NFTHandler, IPawnshop {
     Lending[] lendings;
     
     
-    function setDailyInterestRate(uint256 _rate) external {
+    function setDailyInterestRate(uint256 _rate) external override onlyRole(DEFAULT_ADMIN_ROLE) {
         dailyInterestRate = _rate;
     }
 
-    function getDailyInterestRate() view external returns(uint256) {
+    function getDailyInterestRate() view external override returns(uint256) {
         return dailyInterestRate;
     }
     
-    function setChunkSize(uint256 _chunkSize) external {
+    function setChunkSize(uint256 _chunkSize) override external onlyRole(DEFAULT_ADMIN_ROLE) {
         chunkSize = _chunkSize;
     }
     
-    function borrow(uint256 _amount, uint256 _expirationTerm, uint256 _debtTerm, uint256 _tokenId, address _tokenContract) public {
+    function borrow(uint256 _amount, uint256 _expirationTerm, uint256 _debtTerm, uint256 _tokenId, address _tokenContract) public override {
         require(_amount >= chunkSize, "Amount requested is too small.");
         require(_amount%chunkSize == 0, "Please provide an amount in multiples of the chunk size.");
         require(_expirationTerm > 1, "Please provide an expiration term greater than 1 day.");
@@ -128,7 +131,7 @@ contract Pawnshop is NFTHandler, IPawnshop {
         return participants[_lendingId];
     }
     
-    function lend(uint256 _lendingId) external payable {
+    function lend(uint256 _lendingId) external override payable {
         require(lendings[_lendingId].status == Status.Open, "Lending opportunity is not open.");
         require(msg.value >= lendings[_lendingId].chunkPrice, "Please provide an amount in multiples of the chunk size.");
         require(msg.value%lendings[_lendingId].chunkPrice == 0, "Please provide an amount in multiples of the chunk size.");
@@ -154,8 +157,7 @@ contract Pawnshop is NFTHandler, IPawnshop {
         
     }
     
-    function statusUpdater() external { 
-        
+    function statusUpdater() external override onlyRole(BACKEND_ROLE) { 
         uint256 currentTimestamp = block.timestamp;
         uint256 lendingsLength = lendings.length;
         
@@ -211,7 +213,7 @@ contract Pawnshop is NFTHandler, IPawnshop {
         
     }
 
-    function singleStatusUpdater(uint256 _lendingid) external {}
+    function singleStatusUpdater(uint256 _lendingid) external override onlyRole(BACKEND_ROLE) {}
 
     function returnFunds(uint256 _lendingId) private {
         uint256 participantsLen = participants[_lendingId].length;
@@ -229,7 +231,7 @@ contract Pawnshop is NFTHandler, IPawnshop {
     }
     
     
-    function pay(uint256 _lendingId) external payable {
+    function pay(uint256 _lendingId) external payable override {
         require(msg.value == lendings[_lendingId].debt, "Payment must be equal to debt.");
         require(lendings[_lendingId].status == Status.Locked, "Payment not allowed, status: locked.");
         require(block.timestamp < lendings[_lendingId].endTime, "Payment not allowed, end time reached.");
@@ -237,7 +239,7 @@ contract Pawnshop is NFTHandler, IPawnshop {
     }
 
     // ADDING FUNCTION TO BUY THE NFT 
-    function buy(uint256 _lendingId)external payable{
+    function buy(uint256 _lendingId)external payable override{
         require(msg.value == lendings[_lendingId].debt, "Check the price for this");
         require(lendings[_lendingId].status == Status.ForSale, "Payment not allowed, this NFT is not for sale yet");
         require(block.timestamp > lendings[_lendingId].endTime, "Payment not allowed, this NFT is not for sale yet");
