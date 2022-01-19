@@ -44,9 +44,9 @@ interface IPawnshop {
     // lend is called by a lender to provide ether to a pawn item _lendingId
     function lend(uint256 _lendingId) external payable;
 
-    // statusUpdater is called by the platform to keep listings
+    // updateStatus is called by the platform to keep listings
     // up to date @Admin? TODO
-    function statusUpdater() external;
+    function updateStatus(uint256 _lendingId) external returns(bool); 
 
     // statusUpdater is called by the platform to keep listings
     // up to date @Admin? TODO
