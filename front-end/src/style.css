@@ -65,5 +65,39 @@ h1 {
   padding-bottom: 2rem;
 }
 
+/* Cards */
+.ant-card {
+  background: rgb(22 21 34 / 40%);
+  border-radius: 10px;
+  color: rgb(191, 191, 191) !important;
+}
 
+.ant-card, .ant-card-bordered {
+  border: none !important;
+}
 
+.ant-card-actions {
+  background: transparent;
+  border-radius: 0 0 10px 10px;
+  border-top: 1px solid rgb(240 240 240 / 15%);
+}
+
+.ant-card-cover img {
+  border-radius: 10px 10px 0 0;
+}
+
+.ant-card-meta-title {
+  color: #f339c3;
+}
+
+.ant-card-meta-description {
+  color: inherit;
+}
+
+.ant-card-actions > li > span a:not(.ant-btn), .ant-card-actions > li > span > .anticon {
+  color: rgb(240 240 240 / 60%);
+}
+
+.ant-card-actions > li:not(:last-child) {
+  border-right: 1px solid rgb(240 240 240 / 15%);
+}
