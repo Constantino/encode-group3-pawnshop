@@ -17,7 +17,7 @@ const styles = {
     margin: "0 auto",
     maxWidth: "1000px",
     width: "100%",
-    gap: "10px",
+    gap: "13px",
   },
 };
 

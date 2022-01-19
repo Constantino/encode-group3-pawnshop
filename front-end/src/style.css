@@ -61,8 +61,10 @@ header {
 
 /* Main Content */
 h1 {
-  color: rgb(191, 191, 191) !important;
-  padding-bottom: 2rem;
+  color: rgb(255 255 255 / 75%) !important;
+  padding-bottom: 1.5rem;
+  font-weight: 300;
+  font-size: 2.5em;
 }
 
 /* Cards */
