@@ -17,7 +17,7 @@ const styles = {
     margin: "0 auto",
     maxWidth: "1000px",
     width: "100%",
-    gap: "10px",
+    gap: "13px",
   },
 };
 
@@ -67,7 +67,7 @@ function NFTBalance() {
   console.log("NFTBalances", NFTBalances);
   return (
     <div style={{ padding: "15px", maxWidth: "1030px", width: "100%" }}>
-      <h1>🖼 NFT Balances</h1>
+      <h1>NFT Balances</h1>
       <div style={styles.NFTs}>
         <Skeleton loading={!NFTBalances?.result}>
           {NFTBalances?.result &&

@@ -6,15 +6,100 @@
 .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-open::after,
 .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-selected::after,
 .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-selected::after {
-  border-bottom: 2px solid #21bf96 !important;
+  border-bottom: 2px solid yellow !important;
 }
 
 .ant-menu-horizontal > .ant-menu-item-selected a,
 .ant-menu-horizontal > .ant-menu-item a:hover {
-  color: #21bf96 !important;
+  color: yellow !important;
 }
 
 .ant-modal-content {
   overflow: auto;
   border-radius: 1rem;
+}
+
+/* Main section */
+.ant-layout {
+  /* background: #0d0415; */
+  /* background: radial-gradient(circle, #FC466B 0%, #3F5EFB 100%), #0d0415; */
+  background: radial-gradient(circle, hsl(348deg 97% 63% / 30%) 0%, hsl(230deg 96% 62% / 25%) 100%), #0d0415;
+}
+
+/* Top Bar */
+.ant-layout-header {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: blur(20px) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.12) !important;
+  border-bottom-width: 1px !important;
+  color: rgb(191, 191, 191) !important;
+}
+
+header {
+  color: rgb(191, 191, 191) !important;
+}
+
+/* Main Menu */
+.ant-menu {
+  background-color: transparent;
+}
+
+.ant-menu-horizontal {
+  border: none;
+}
+
+.ant-menu-horizontal > .ant-menu-item a {
+  color: rgb(191, 191, 191);
+}
+
+/* Top Bar Buttons */
+.ant-btn {
+  background: transparent;
+  border: 1px solid rgb(231 234 243 / 40%) !important;
+  color: rgb(191, 191, 191) !important;
+}
+
+/* Main Content */
+h1 {
+  color: rgb(255 255 255 / 75%) !important;
+  padding-bottom: 1.5rem;
+  font-weight: 300;
+  font-size: 2.5em;
+}
+
+/* Cards */
+.ant-card {
+  background: rgb(22 21 34 / 40%);
+  border-radius: 10px;
+  color: rgb(191, 191, 191) !important;
+}
+
+.ant-card, .ant-card-bordered {
+  border: none !important;
+}
+
+.ant-card-actions {
+  background: transparent;
+  border-radius: 0 0 10px 10px;
+  border-top: 1px solid rgb(240 240 240 / 15%);
+}
+
+.ant-card-cover img {
+  border-radius: 10px 10px 0 0;
+}
+
+.ant-card-meta-title {
+  color: #f339c3;
+}
+
+.ant-card-meta-description {
+  color: inherit;
+}
+
+.ant-card-actions > li > span a:not(.ant-btn), .ant-card-actions > li > span > .anticon {
+  color: rgb(240 240 240 / 60%);
+}
+
+.ant-card-actions > li:not(:last-child) {
+  border-right: 1px solid rgb(240 240 240 / 15%);
 }
