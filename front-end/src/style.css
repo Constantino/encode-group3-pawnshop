@@ -59,5 +59,11 @@ header {
   color: rgb(191, 191, 191) !important;
 }
 
+/* Main Content */
+h1 {
+  color: rgb(191, 191, 191) !important;
+  padding-bottom: 2rem;
+}
+
 
 
