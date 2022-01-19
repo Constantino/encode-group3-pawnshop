@@ -53,7 +53,7 @@ contract Pawnshop is NFTHandler, IPawnshop, AccessControl {
         Status status;
     }
     
-    Lending[] lendings;
+    mapping(uint256 => Lending) lendings;
     
     
     function setDailyInterestRate(uint256 _rate) external override onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -68,26 +68,25 @@ contract Pawnshop is NFTHandler, IPawnshop, AccessControl {
         chunkSize = _chunkSize;
     }
     
-    function borrow(uint256 _amount, uint256 _expirationTerm, uint256 _debtTerm, uint256 _tokenId, address _tokenContract) public override {
+    function borrow(uint256 _amount, uint256 _expirationTerm, uint256 _debtTerm, uint256 _tokenId, address _tokenContract) public override{
         require(_amount >= chunkSize, "Amount requested is too small.");
         require(_amount%chunkSize == 0, "Please provide an amount in multiples of the chunk size.");
         require(_expirationTerm > 1, "Please provide an expiration term greater than 1 day.");
         require(_debtTerm > 1, "Please provide a debt term greater than 1 day.");
         
         uint256 openingTime = block.timestamp;
-        //uint256 reviewingTime = block.timestamp+86400; // now + 1 day
-        //TODO: MAKING IT 1 MIN JUST FOR TESTNG
+        // TODO: uint256 reviewingTime = block.timestamp+86400; // now + 1 day
+        // MAKING IT 1 MIN JUST FOR TESTNG
         uint256 reviewingTime = block.timestamp+60; // now + 1 day
         // closingTime equals openingTime + X days
-        //uint256 closingTime = openingTime+86400*_expirationTerm;
-        // TODO: MAKING IT 1.5 MIN JUST FOR TESTING
+        // TODO: uint256 closingTime = openingTime+86400*_expirationTerm;
+        // MAKING IT 1 MIN JUST FOR TESTING
         uint256 closingTime = openingTime+60*_expirationTerm;
 
         uint256 chunkPrice = chunkNFT(_amount);
-        
-        lendings.push(
-            Lending(
-            counter,
+        uint256 lendingId = counter;
+        lendings[lendingId] = Lending(
+            lendingId,
             msg.sender,
             _amount,
             chunkPrice,
@@ -103,8 +102,7 @@ contract Pawnshop is NFTHandler, IPawnshop, AccessControl {
             _tokenId,
             _tokenContract,
             Status.Review
-            )
-        );
+            );
 
         counter++;
     }
@@ -120,11 +118,7 @@ contract Pawnshop is NFTHandler, IPawnshop, AccessControl {
         return chunkPrice;
     }
     
-    function getLendings() external view returns (Lending[] memory) {
-        return lendings;
-    }
-
-    function getLending(uint256 _lendingId) external view returns (Lending memory) {
+    function getLending(uint256 _lendingId) public view returns (Lending memory) {
         return lendings[_lendingId];
     }
 
@@ -158,60 +152,54 @@ contract Pawnshop is NFTHandler, IPawnshop, AccessControl {
         
     }
     
-    function statusUpdater() external override onlyRole(BACKEND_ROLE) { 
+    function updateStatus(uint256 _lendingId) external override onlyRole(BACKEND_ROLE) returns(bool) { 
         uint256 currentTimestamp = block.timestamp;
-        uint256 lendingsLength = lendings.length;
-        
-        for(uint256 id; id < lendingsLength; id++) {
+
+        if (lendings[_lendingId].status == Status.Terminated) {
+                return false;
+                
+        } else if(lendings[_lendingId].status == Status.Review) {
             
-            Status status = lendings[id].status;
+            ERC721 xContract = ERC721(lendings[_lendingId].tokenContract);
+            address currentOwner = xContract.ownerOf(lendings[_lendingId].tokenId);
             
-            if (status == Status.Terminated) {
-                continue;
-                
-            } else if(status == Status.Review) {
-                
-                ERC721 xContract = ERC721(lendings[id].tokenContract);
-                address currentOwner = xContract.ownerOf(lendings[id].tokenId);
-                
-                // if user transfered the NFT to the pawnshop, then set lending status to Open to receive funding
-                if(currentOwner == address(this)){
-                    lendings[id].status = Status.Open;
-                } else {
-                    // Otherwise, check if reviewing time has been exceeded, to terminate lending
-                    if(currentTimestamp > lendings[id].reviewingTime) {
-                        lendings[id].status = Status.Terminated;
-                    }
+            // if user transfered the NFT to the pawnshop, then set lending status to Open to receive funding
+            if(currentOwner == address(this)){
+                lendings[_lendingId].status = Status.Open;
+            } else {
+                // Otherwise, check if reviewing time has been exceeded, to terminate lending
+                if(currentTimestamp > lendings[_lendingId].reviewingTime) {
+                    lendings[_lendingId].status = Status.Terminated;
                 }
-            
-            } else if(status == Status.Open) {
-                // If lending is open and did not complete funding on time, then terminate lending and return funds
-                if(currentTimestamp >= lendings[id].closingTime){
-                    lendings[id].status = Status.Terminated;
-                    // Return funds to participants
-                    returnFunds(id);
-                    returnNFT(id);
-                }        
-            } else if(status == Status.ReadyToLend) {
-                payable(lendings[id].borrower).transfer(lendings[id].amount);
-                lockLending(id);
-            } 
-            else if(status == Status.Locked) {
-                // If lending is locked and user did not pay on time, then terminate lending
-                if(currentTimestamp >= lendings[id].endTime){
-                    lendings[id].status = Status.ForSale;/////MODIFIED TO BUY THE NFT INSTEAD OF TERMINATED
-                }
-            } else if(status == Status.Paid) {
-                distributePayments(id);
-                returnNFT(id);
-                lendings[id].status = Status.Terminated;
-            } else if(status == Status.Sold){
-                distributePayments(id);
-                lendings[id].status = Status.Terminated;
             }
+        
+        } else if(lendings[_lendingId].status == Status.Open) {
+            // If lending is open and did not complete funding on time, then terminate lending and return funds
+            if(currentTimestamp >= lendings[_lendingId].closingTime){
+                lendings[_lendingId].status = Status.Terminated;
+                // Return funds to participants
+                returnFunds(_lendingId);
+                returnNFT(_lendingId);
+            }        
+        } else if(lendings[_lendingId].status == Status.ReadyToLend) {
+            payable(lendings[_lendingId].borrower).transfer(lendings[_lendingId].amount);
+            lockLending(_lendingId);
+        } 
+        else if(lendings[_lendingId].status == Status.Locked) {
+            // If lending is locked and user did not pay on time, then terminate lending
+            if(currentTimestamp >= lendings[_lendingId].endTime){
+                lendings[_lendingId].status = Status.ForSale;
+            }
+        } else if(lendings[_lendingId].status == Status.Paid) {
+            distributePayments(_lendingId);
+            returnNFT(_lendingId);
+            lendings[_lendingId].status = Status.Terminated;
+        } else if(lendings[_lendingId].status == Status.Sold){
+            distributePayments(_lendingId);
+            lendings[_lendingId].status = Status.Terminated;
         }
-        
-        
+
+        return true;
     }
 
     function singleStatusUpdater(uint256 _lendingid) external override onlyRole(BACKEND_ROLE) {}
