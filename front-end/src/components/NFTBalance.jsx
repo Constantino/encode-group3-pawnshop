@@ -185,19 +185,8 @@ function NFTBalance() {
       >
         <Input value={`NFT: ${nftToPawn?.name || "NFT"} #${nftToPawn?.token_id || "id"}`} disabled/>
         <Input value={`Contract address: ${nftToPawn?.token_address || "address"}`} disabled/>
+        <Input value={`NFT id: ${nftToPawn?.token_id || "id"}`} disabled/>
         
-        <Form.Item
-          label="NFT id"
-          name="nftId"
-          rules={[
-            {
-              required: true,
-              message: 'NFT Id is required',
-            },
-          ]}
-        >
-          <InputNumber defaultValue={nftToPawn?.token_id} disabled/>
-        </Form.Item>
         <Form.Item
           label="Amount to borrow"
           name="amount"
@@ -208,7 +197,7 @@ function NFTBalance() {
             },
           ]}
         >
-          <InputNumber addonAfter={selectAfter} defaultValue={100} />
+          <InputNumber addonAfter={selectAfter}/>
         </Form.Item>
         <Form.Item
           label="Expiration date"
@@ -232,7 +221,7 @@ function NFTBalance() {
             },
           ]}
         >
-          <InputNumber addonAfter={dateSelectAfter} defaultValue={30} />
+          <InputNumber addonAfter={dateSelectAfter}/>
         </Form.Item>
 
         <Form.Item
