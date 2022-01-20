@@ -19,14 +19,18 @@
   border-radius: 1rem;
 }
 
-/* Main section */
+
+/* MAIN SECTION */
+
 .ant-layout {
   /* background: #0d0415; */
   /* background: radial-gradient(circle, #FC466B 0%, #3F5EFB 100%), #0d0415; */
   background: radial-gradient(circle, hsl(348deg 97% 63% / 30%) 0%, hsl(230deg 96% 62% / 25%) 100%), #0d0415;
 }
 
-/* Top Bar */
+
+/* TOP BAR */
+
 .ant-layout-header {
   background-color: rgba(255, 255, 255, 0.06) !important;
   backdrop-filter: blur(20px) !important;
@@ -39,7 +43,9 @@ header {
   color: rgb(191, 191, 191) !important;
 }
 
-/* Main Menu */
+
+/* MAIN MENU */
+
 .ant-menu {
   background-color: transparent;
 }
@@ -52,14 +58,18 @@ header {
   color: rgb(191, 191, 191);
 }
 
-/* Top Bar Buttons */
+
+/* TOP BAR BUTTONS */
+
 .ant-btn {
   background: transparent;
   border: 1px solid rgb(231 234 243 / 40%) !important;
   color: rgb(191, 191, 191) !important;
 }
 
-/* Main Content */
+
+/* MAIN CONTENT */
+
 h1 {
   color: rgb(255 255 255 / 75%) !important;
   padding-bottom: 1.5rem;
@@ -67,7 +77,9 @@ h1 {
   font-size: 2.5em;
 }
 
-/* Cards */
+
+/* CARDS */
+
 .ant-card {
   background: rgb(22 21 34 / 40%);
   border-radius: 10px;
@@ -123,4 +135,24 @@ h1 {
   min-height: 30px;
   font-size: 18px;
   padding: 7px 0 0 6px;
+}
+
+
+/* FOOTER */
+
+footer {
+  height: 23%;
+  margin: 4rem 0 0 0;
+  background-color: rgb(22 21 34/.3) !important;
+  color: white !important;
+  text-align: center;
+}
+
+footer > div {
+  display: inline-block !important;
+  margin: 2rem 0 0 0 !important;
+}
+
+footer .ant-typography {
+  color: rgb(191 191 191 / 60%) !important;
 }
