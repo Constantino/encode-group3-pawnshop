@@ -27,6 +27,9 @@ function MenuItems() {
       <Menu.Item key="/contract">
         <NavLink to="/contract">Contract</NavLink>
       </Menu.Item>
+      <Menu.Item key="/buyshop">
+        <NavLink to="/buyshop">Shop</NavLink>
+      </Menu.Item>
     </Menu>
   );
 }
