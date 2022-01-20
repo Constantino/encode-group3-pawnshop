@@ -78,6 +78,17 @@ h1 {
   border: none !important;
 }
 
+.ant-card .ant-btn {
+  background-image: linear-gradient(to right, rgb(255 0 204 / 50%) 0%, rgb(51 51 153)  51%, rgb(16 16 72)  100%);
+  transition: 0.3s;
+  background-size: 200% auto;
+  color: white;
+}
+
+.ant-card .ant-btn:hover {
+  background-position: right center;
+}
+
 .ant-card-actions {
   background: transparent;
   border-radius: 0 0 10px 10px;
