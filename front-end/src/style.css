@@ -84,6 +84,7 @@ h1 {
   background-size: 200% auto;
   color: white;
   border: none !important;
+  font-weight: 500;
 }
 
 .ant-card .ant-btn:hover {
