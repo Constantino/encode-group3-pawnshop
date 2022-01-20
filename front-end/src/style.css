@@ -103,3 +103,9 @@ h1 {
 .ant-card-actions > li:not(:last-child) {
   border-right: 1px solid rgb(240 240 240 / 15%);
 }
+
+.ant-card-actions > li > span > .anticon {
+  min-height: 30px;
+  font-size: 18px;
+  padding: 7px 0 0 6px;
+}
