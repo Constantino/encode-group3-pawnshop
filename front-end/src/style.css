@@ -83,6 +83,7 @@ h1 {
   transition: 0.3s;
   background-size: 200% auto;
   color: white;
+  border: none !important;
 }
 
 .ant-card .ant-btn:hover {
@@ -101,6 +102,8 @@ h1 {
 
 .ant-card-meta-title {
   color: #f339c3;
+  font-weight: 400;
+  font-size: 18px;
 }
 
 .ant-card-meta-description {
