@@ -144,4 +144,15 @@ footer {
   height: 23%;
   margin: 4rem 0 0 0;
   background-color: rgb(22 21 34/.3) !important;
+  color: white !important;
+  text-align: center;
+}
+
+footer > div {
+  display: inline-block !important;
+  margin: 2rem 0 0 0 !important;
+}
+
+footer .ant-typography {
+  color: rgb(191 191 191 / 60%) !important;
 }
