@@ -1,27 +1,38 @@
+import { FileSearchOutlined, SendOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Card,
+  DatePicker,
+  Form,
+  Image,
+  Input,
+  InputNumber,
+  Modal,
+  Select,
+  Skeleton,
+  Tooltip,
+} from "antd";
+import { getExplorer } from "helpers/networks";
+import { useVerifyMetadata } from "hooks/useVerifyMetadata";
 import React, { useState } from "react";
 import { useMoralis, useNFTBalances } from "react-moralis";
-import { Card, Image, Tooltip, Modal, Input, Skeleton, Button, Select, InputNumber, DatePicker, Form } from "antd";
-import { FileSearchOutlined, SendOutlined, ShoppingCartOutlined } from "@ant-design/icons";
-import { getExplorer } from "helpers/networks";
+import { useLocation } from "react-router-dom";
 import AddressInput from "./AddressInput";
-import { useVerifyMetadata } from "hooks/useVerifyMetadata";
 
 const { Meta } = Card;
 
 const { Option } = Select;
 
-
 const onFinish = (values) => {
-  console.log('Success:', values);
+  console.log("Success:", values);
 };
 
 const onFinishFailed = (errorInfo) => {
-  console.log('Failed:', errorInfo);
+  console.log("Failed:", errorInfo);
 };
 
-
 const selectAfter = (
-  <Select defaultValue="Wei" >
+  <Select defaultValue="Wei">
     <Option value="Wei">Wei</Option>
     <Option value="GWei">GWei</Option>
     <Option value="ETH">ETH</Option>
@@ -29,7 +40,7 @@ const selectAfter = (
 );
 
 const dateSelectAfter = (
-  <Select defaultValue="days" >
+  <Select defaultValue="days">
     <Option value="days">days</Option>
     <Option value="months">months</Option>
     <Option value="years">years</Option>
@@ -64,6 +75,8 @@ function NFTBalance() {
   const [nftToPawn, setNftToPawn] = useState(null);
   const [isPending, setIsPending] = useState(false);
   const { verifyMetadata } = useVerifyMetadata();
+
+  const location = useLocation();
 
   async function transfer(nft, amount, receiver) {
     const options = {
@@ -103,9 +116,42 @@ function NFTBalance() {
   };
 
   console.log("NFTBalances", NFTBalances);
+
+  const isLend = location.pathname.includes("lend");
+
+  const getActions = (nft) => {
+    const actions = [
+      <Tooltip title="View On Blockexplorer">
+        <FileSearchOutlined
+          onClick={() =>
+            window.open(
+              `${getExplorer(chainId)}address/${nft.token_address}`,
+              "_blank"
+            )
+          }
+        />
+      </Tooltip>,
+      <Tooltip title={isLend ? "Lend NFT" : "Pawn NFT"}>
+        <Button onClick={() => handlePawnClick(nft)}>
+          {isLend ? "Lend" : "Pawn"}
+        </Button>
+      </Tooltip>,
+    ];
+
+    if (!isLend) {
+      actions.push(
+        <Tooltip title="Transfer NFT">
+          <SendOutlined onClick={() => handleTransferClick(nft)} />
+        </Tooltip>
+      );
+    }
+
+    return actions;
+  };
+
   return (
     <div style={{ padding: "15px", maxWidth: "1030px", width: "100%" }}>
-      <h1>NFT Balances</h1>
+      <h1>{isLend ? "Lend" : "NFT Balances"}</h1>
       <div style={styles.NFTs}>
         <Skeleton loading={!NFTBalances?.result}>
           {NFTBalances?.result &&
@@ -115,19 +161,7 @@ function NFTBalance() {
               return (
                 <Card
                   hoverable
-                  actions={[
-                    <Tooltip title="View On Blockexplorer">
-                      <FileSearchOutlined
-                        onClick={() => window.open(`${getExplorer(chainId)}address/${nft.token_address}`, "_blank")}
-                      />
-                    </Tooltip>,
-                    <Tooltip title="Transfer NFT">
-                      <SendOutlined onClick={() => handleTransferClick(nft)} />
-                    </Tooltip>,
-                    <Tooltip title="Pawn NFT">
-                      <Button onClick={() => handlePawnClick(nft)}>Pawn</Button>
-                    </Tooltip>,
-                  ]}
+                  actions={getActions(nft)}
                   style={{ width: 240, border: "2px solid #e7eaf3" }}
                   cover={
                     <Image
@@ -156,7 +190,10 @@ function NFTBalance() {
       >
         <AddressInput autoFocus placeholder="Receiver" onChange={setReceiver} />
         {nftToSend && nftToSend.contract_type === "erc1155" && (
-          <Input placeholder="amount to send" onChange={(e) => handleChange(e)} />
+          <Input
+            placeholder="amount to send"
+            onChange={(e) => handleChange(e)}
+          />
         )}
       </Modal>
       <Modal
@@ -167,74 +204,80 @@ function NFTBalance() {
         confirmLoading={isPending}
         okText="Pawn"
       >
-
-      <Form
-        name="basic"
-        labelCol={{
-          span: 8,
-        }}
-        wrapperCol={{
-          span: 16,
-        }}
-        initialValues={{
-          remember: true,
-        }}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
-        autoComplete="off"
-      >
-        <Input value={`NFT: ${nftToPawn?.name || "NFT"} #${nftToPawn?.token_id || "id"}`} disabled/>
-        <Input value={`Contract address: ${nftToPawn?.token_address || "address"}`} disabled/>
-        <Input value={`NFT id: ${nftToPawn?.token_id || "id"}`} disabled/>
-        
-        <Form.Item
-          label="Amount to borrow"
-          name="amount"
-          rules={[
-            {
-              required: true,
-              message: 'Amount is required',
-            },
-          ]}
-        >
-          <InputNumber addonAfter={selectAfter}/>
-        </Form.Item>
-        <Form.Item
-          label="Expiration date"
-          name="expirationDate"
-          rules={[
-            {
-              required: true,
-              message: 'Expiration date is required',
-            },
-          ]}
-        >
-          <DatePicker onChange={onChange} />
-        </Form.Item>
-        <Form.Item
-          label="Debt term"
-          name="debtTerm"
-          rules={[
-            {
-              required: true,
-              message: 'Debt term is required',
-            },
-          ]}
-        >
-          <InputNumber addonAfter={dateSelectAfter}/>
-        </Form.Item>
-
-        <Form.Item
+        <Form
+          name="basic"
+          labelCol={{
+            span: 8,
+          }}
           wrapperCol={{
-            offset: 8,
             span: 16,
           }}
+          initialValues={{
+            remember: true,
+          }}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+          autoComplete="off"
         >
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </Form.Item>
-          
+          <Input
+            value={`NFT: ${nftToPawn?.name || "NFT"} #${
+              nftToPawn?.token_id || "id"
+            }`}
+            disabled
+          />
+          <Input
+            value={`Contract address: ${nftToPawn?.token_address || "address"}`}
+            disabled
+          />
+          <Input value={`NFT id: ${nftToPawn?.token_id || "id"}`} disabled />
+
+          <Form.Item
+            label="Amount to borrow"
+            name="amount"
+            rules={[
+              {
+                required: true,
+                message: "Amount is required",
+              },
+            ]}
+          >
+            <InputNumber addonAfter={selectAfter} />
+          </Form.Item>
+          <Form.Item
+            label="Expiration date"
+            name="expirationDate"
+            rules={[
+              {
+                required: true,
+                message: "Expiration date is required",
+              },
+            ]}
+          >
+            <DatePicker onChange={onChange} />
+          </Form.Item>
+          <Form.Item
+            label="Debt term"
+            name="debtTerm"
+            rules={[
+              {
+                required: true,
+                message: "Debt term is required",
+              },
+            ]}
+          >
+            <InputNumber addonAfter={dateSelectAfter} />
+          </Form.Item>
+
+          <Form.Item
+            wrapperCol={{
+              offset: 8,
+              span: 16,
+            }}
+          >
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
         </Form>
       </Modal>
     </div>

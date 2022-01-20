@@ -1,5 +1,5 @@
-import { useLocation } from "react-router";
 import { Menu } from "antd";
+import { useLocation } from "react-router";
 import { NavLink } from "react-router-dom";
 
 function MenuItems() {
@@ -23,6 +23,9 @@ function MenuItems() {
       </Menu.Item>
       <Menu.Item key="/nftBalance">
         <NavLink to="/nftBalance">NFTs</NavLink>
+      </Menu.Item>
+      <Menu.Item key="/lend">
+        <NavLink to="/lend">Lend</NavLink>
       </Menu.Item>
       <Menu.Item key="/contract">
         <NavLink to="/contract">Contract</NavLink>
