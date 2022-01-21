@@ -138,6 +138,28 @@ h1 {
 }
 
 
+/* MODAL */
+
+.ant-modal-body .ant-input[disabled] {
+  color: rgb(180 113 221);
+  background-color: rgb(180 113 221 / 10%);
+  border-color: transparent;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 0;
+}
+
+.ant-modal-body .ant-form-item {
+  margin-top: 24px;
+}
+
+.ant-modal-title {
+  color: #f339c3;
+  font-size: 22px;
+  font-weight: 300;
+}
+
+
 /* FOOTER */
 
 footer {
