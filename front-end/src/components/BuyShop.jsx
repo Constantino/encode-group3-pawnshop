@@ -54,7 +54,7 @@ const styles = {
 };
 
 function BuyShop() {
-  const { data: NFTBalances } = useNFTBalances({ address: 0x7bf7DEEb46d5D52D89c87465107db384290933f9 });
+  const { data: NFTBalances } = useNFTBalances(); //TODO update to use platform NFTs
   const { Moralis, chainId } = useMoralis();
   const [visible, setVisibility] = useState(false);
   const [pawnModalVisible, setPawnModalVisibility] = useState(false);
