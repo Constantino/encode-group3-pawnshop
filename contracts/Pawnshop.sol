@@ -55,6 +55,8 @@ contract Pawnshop is NFTHandler, IPawnshop, AccessControl {
     
     mapping(uint256 => Lending) lendings;
     
+    event RefundLender (address indexed user, uint256 amount);
+    event DistributedPayment (address indexed user, uint256 amount);
     
     function setDailyInterestRate(uint256 _rate) external override onlyRole(DEFAULT_ADMIN_ROLE) {
         dailyInterestRate = _rate;
@@ -152,13 +154,11 @@ contract Pawnshop is NFTHandler, IPawnshop, AccessControl {
         
     }
     
-    function updateStatus(uint256 _lendingId) external override onlyRole(BACKEND_ROLE) returns(bool) { 
-        uint256 currentTimestamp = block.timestamp;
+    function updateStatus(uint256 _lendingId) external override onlyRole(BACKEND_ROLE) returns(bool) {
+        require(lendings[_lendingId].status != Status.Terminated, "Lending is terminated."); 
+        uint256 currentTimestamp = block.timestamp;            
 
-        if (lendings[_lendingId].status == Status.Terminated) {
-                return false;
-                
-        } else if(lendings[_lendingId].status == Status.Review) {
+       if(lendings[_lendingId].status == Status.Review) {
             
             ERC721 xContract = ERC721(lendings[_lendingId].tokenContract);
             address currentOwner = xContract.ownerOf(lendings[_lendingId].tokenId);
@@ -211,6 +211,7 @@ contract Pawnshop is NFTHandler, IPawnshop, AccessControl {
         if(participantsLen > 0) {
             for(uint256 i; i < participantsLen; i++) {
                 payable(lendParticipants[i].account).transfer(lendParticipants[i].amount);
+                emit RefundLender(lendParticipants[i].account, lendParticipants[i].amount);
             }
         }
     }
@@ -246,6 +247,7 @@ contract Pawnshop is NFTHandler, IPawnshop, AccessControl {
                 uint256 proportion = participants[_lendingId][i].amount/lendings[_lendingId].amount;
                 uint256 proportionalAmount = proportion*lendings[_lendingId].debt;
                 payable(participants[_lendingId][i].account).transfer(proportionalAmount);
+                emit DistributedPayment(participants[_lendingId][i].account, proportionalAmount);
             }
         }
     }
