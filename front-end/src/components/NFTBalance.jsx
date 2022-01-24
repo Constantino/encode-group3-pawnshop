@@ -5,6 +5,7 @@ import { FileSearchOutlined, SendOutlined, ShoppingCartOutlined } from "@ant-des
 import { getExplorer } from "helpers/networks";
 import AddressInput from "./AddressInput";
 import { useVerifyMetadata } from "hooks/useVerifyMetadata";
+import bannernft from '../banner-nft-01.png';
 
 const { Meta } = Card;
 
@@ -105,6 +106,12 @@ function NFTBalance() {
   console.log("NFTBalances", NFTBalances);
   return (
     <div style={{ padding: "15px", maxWidth: "1030px", width: "100%" }}>
+      <div className="banner">
+        <img src={bannernft} alt="" />
+        <h2>Pawn your Encode Club NFTs with ease!</h2>
+        <p>Make your idle NFTs work for you! With NFT Pawn Shop you can monetize your NFT collections and assets to expand your passive-income strategy in an easy, appealing and effective way.
+        </p>
+      </div>
       <h1>NFT Balances</h1>
       <div style={styles.NFTs}>
         <Skeleton loading={!NFTBalances?.result}>

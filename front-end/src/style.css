@@ -81,7 +81,7 @@ h1 {
 /* CARDS */
 
 .ant-card {
-  background: rgb(22 21 34 / 40%);
+  background: rgb(22 21 34 / 80%);
   border-radius: 10px;
   color: rgb(191, 191, 191) !important;
 }
@@ -222,4 +222,34 @@ footer > div {
 
 footer .ant-typography {
   color: rgb(191 191 191 / 60%) !important;
+}
+
+
+/* BANNER */
+
+.banner {
+  background: rgb(22 21 34 / 45%);
+  border-radius: 10px;
+  color: rgb(191, 191, 191) !important;
+  padding: 2rem 2rem 2rem 17rem;
+  margin-bottom: 30px;
+  position: relative;
+  min-height: 200px;
+}
+
+.banner h2 {
+  color: #f339c3;
+  font-weight: 300;
+  font-size: 28px;
+  padding-bottom: 10px;
+}
+
+.banner img {
+  position: absolute;
+  top: -36px;
+  left: 20px;
+}
+
+.banner p {
+  font-size: 18px;
 }
