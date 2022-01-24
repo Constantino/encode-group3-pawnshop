@@ -81,7 +81,7 @@ h1 {
 /* CARDS */
 
 .ant-card {
-  background: rgb(22 21 34 / 40%);
+  background: rgb(22 21 34 / 80%);
   border-radius: 10px;
   color: rgb(191, 191, 191) !important;
 }
